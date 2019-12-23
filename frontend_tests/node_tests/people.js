@@ -69,6 +69,7 @@ run_test('basics', () => {
 
     realm_persons = people.get_realm_persons();
     assert.equal(_.size(realm_persons), 1);
+    assert.equal(people.get_ascii_full_name(realm_persons[0]), 'Isaac Newton');
     assert.equal(realm_persons[0].full_name, 'Isaac Newton');
 
     const active_user_ids = people.get_active_user_ids();
@@ -920,6 +921,26 @@ run_test('email_for_user_settings', () => {
 
     page_params.is_admin = false;
     assert.equal(email(isaac), isaac.email);
+});
+
+run_test('get_ascii_full_name', () => {
+    const user = {
+        email: 'francois@example.com',
+        user_id: 93,
+        full_name: 'François DuPont',
+    };
+
+    // François
+    people.add_in_realm(user);
+    assert.equal(people.get_ascii_full_name(user), 'Francois DuPont');
+
+    // Frank
+    people.set_full_name(user, 'Frank DuPont');
+    assert.equal(people.get_ascii_full_name(user), 'Frank DuPont');
+
+    // Noël
+    people.set_full_name(user, 'Noël Bridges');
+    assert.equal(people.get_ascii_full_name(user), 'Noel Bridges');
 });
 
 run_test('emails_strings_to_user_ids_array', function () {
